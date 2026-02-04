@@ -20,4 +20,5 @@ app.post("/honeypot", (req, res) => {
     });
   }
 
-  const { language, audio_format, audio_base64 }
+const { language, audio_format, audio_base64 } = req.body;
+
