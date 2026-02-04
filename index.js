@@ -5,7 +5,9 @@ app.use(express.json({ limit: "10mb" }));
 
 const API_KEY = "test123";
 
-app.post("/honeypot", (req, res) => {
+app.get("/", (req, res) => {
+  res.json({ status: "Honeypot API running" });
+});
   const apiKey = req.headers["x-api-key"];
   if (apiKey !== API_KEY) {
     return res.status(401).json({ error: "INVALID_API_KEY" });
