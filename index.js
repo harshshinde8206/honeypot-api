@@ -1,38 +1,34 @@
-const express = require("express");
+import express from "express";
+
 const app = express();
 
+// 🔴 REQUIRED — without this req.body is undefined
 app.use(express.json());
 
-const PORT = process.env.PORT || 10000;
-
-app.get("/", (req, res) => {
-  res.json({ status: "Honeypot API running" });
-});
-
 app.post("/honeypot", (req, res) => {
-  const apiKey = req.headers["x-api-key"];
+  const body = req.body;
 
-  if (!apiKey) {
-    return res.status(401).json({ error: "Missing API key" });
+  // Basic validation (must match tester payload)
+  if (
+    !body ||
+    !body.sessionId ||
+    !body.message ||
+    !body.message.text
+  ) {
+    return res.status(400).json({
+      error: "INVALID_REQUEST_BODY"
+    });
   }
 
-  const { language, audio_format, audio_base64 } = req.body;
-
-  if (!language || !audio_format || !audio_base64) {
-    return res.status(400).json({ error: "INVALID_REQUEST_BODY" });
-  }
-
-  res.json({
-    status: "captured",
-    intel: {
-      language,
-      audio_format,
-      audio_length: audio_base64.length,
-      api_key_used: apiKey
-    }
+  // Honeypot-style reply
+  return res.json({
+    status: "success",
+    reply: "Why is my account being suspended?"
   });
 });
 
+// Render requires PORT binding
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`🍯 Honeypot API running on port ${PORT}`);
 });
